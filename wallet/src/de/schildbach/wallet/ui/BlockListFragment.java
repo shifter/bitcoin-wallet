@@ -120,7 +120,7 @@ public final class BlockListFragment extends ListFragment
 	{
 		super.onCreate(savedInstanceState);
 
-		adapter = new BlockListAdapter();
+		adapter = new BlockListAdapter(config.getShowReceivedToAddress());
 		setListAdapter(adapter);
 	}
 
@@ -239,6 +239,11 @@ public final class BlockListFragment extends ListFragment
 		private final LayoutInflater inflater = LayoutInflater.from(activity);
 
 		private final List<StoredBlock> blocks = new ArrayList<StoredBlock>(MAX_BLOCKS);
+
+		public BlockListAdapter(final boolean showTransactionsReceivedToAddress)
+		{
+			transactionsAdapter.setShowReceivedToAddress(showTransactionsReceivedToAddress);
+		}
 
 		public void clear()
 		{
