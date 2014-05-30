@@ -20,7 +20,6 @@ package de.schildbach.wallet.service;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.math.BigInteger;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,6 +66,7 @@ import com.google.bitcoin.core.Address;
 import com.google.bitcoin.core.Block;
 import com.google.bitcoin.core.BlockChain;
 import com.google.bitcoin.core.CheckpointManager;
+import com.google.bitcoin.core.Coin;
 import com.google.bitcoin.core.Peer;
 import com.google.bitcoin.core.PeerEventListener;
 import com.google.bitcoin.core.PeerGroup;
@@ -122,7 +122,7 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 
 	private final Set<Impediment> impediments = EnumSet.noneOf(Impediment.class);
 	private int notificationCount = 0;
-	private BigInteger notificationAccumulatedAmount = BigInteger.ZERO;
+	private Coin notificationAccumulatedAmount = Coin.ZERO;
 	private final List<Address> notificationAddresses = new LinkedList<Address>();
 	private AtomicInteger transactionsReceived = new AtomicInteger();
 	private int bestChainHeightEver;
@@ -147,14 +147,14 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 		}
 
 		@Override
-		public void onCoinsReceived(final Wallet wallet, final Transaction tx, final BigInteger prevBalance, final BigInteger newBalance)
+		public void onCoinsReceived(final Wallet wallet, final Transaction tx, final Coin prevBalance, final Coin newBalance)
 		{
 			transactionsReceived.incrementAndGet();
 
 			final int bestChainHeight = blockChain.getBestChainHeight();
 
 			final Address from = WalletUtils.getFirstFromAddress(tx);
-			final BigInteger amount = tx.getValue(wallet);
+			final Coin amount = tx.getValue(wallet);
 			final ConfidenceType confidenceType = tx.getConfidence().getConfidenceType();
 
 			handler.post(new Runnable()
@@ -173,13 +173,13 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 		}
 
 		@Override
-		public void onCoinsSent(final Wallet wallet, final Transaction tx, final BigInteger prevBalance, final BigInteger newBalance)
+		public void onCoinsSent(final Wallet wallet, final Transaction tx, final Coin prevBalance, final Coin newBalance)
 		{
 			transactionsReceived.incrementAndGet();
 		}
 	};
 
-	private void notifyCoinsReceived(@Nullable final Address from, @Nonnull final BigInteger amount)
+	private void notifyCoinsReceived(@Nullable final Address from, @Nonnull final Coin amount)
 	{
 		if (notificationCount == 1)
 			nm.cancel(NOTIFICATION_ID_COINS_RECEIVED);
@@ -674,7 +674,7 @@ public class BlockchainServiceImpl extends android.app.Service implements Blockc
 			if (BlockchainService.ACTION_CANCEL_COINS_RECEIVED.equals(action))
 			{
 				notificationCount = 0;
-				notificationAccumulatedAmount = BigInteger.ZERO;
+				notificationAccumulatedAmount = Coin.ZERO;
 				notificationAddresses.clear();
 
 				nm.cancel(NOTIFICATION_ID_COINS_RECEIVED);
