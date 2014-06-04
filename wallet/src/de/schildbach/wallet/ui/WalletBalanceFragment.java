@@ -134,7 +134,6 @@ public final class WalletBalanceFragment extends Fragment
 			viewBalanceLocalFrame.setForeground(getResources().getDrawable(R.drawable.dropdown_ic_arrow_small));
 
 		viewBalanceLocal = (CurrencyTextView) view.findViewById(R.id.wallet_balance_local);
-		viewBalanceLocal.setPrecision(Constants.LOCAL_PRECISION, 0);
 		viewBalanceLocal.setInsignificantRelativeSize(1);
 		viewBalanceLocal.setStrikeThru(Constants.TEST);
 
@@ -217,8 +216,7 @@ public final class WalletBalanceFragment extends Fragment
 			if (balance != null)
 			{
 				viewBalanceBtc.setVisibility(View.VISIBLE);
-				viewBalanceBtc.setPrecision(config.getBtcPrecision(), config.getBtcShift());
-				viewBalanceBtc.setPrefix(config.getBtcPrefix());
+				viewBalanceBtc.setFormat(config.getFormat());
 				viewBalanceBtc.setAmount(balance);
 
 				if (showLocalBalance)
@@ -227,7 +225,7 @@ public final class WalletBalanceFragment extends Fragment
 					{
 						final Coin localValue = WalletUtils.localValue(balance, exchangeRate.rate);
 						viewBalanceLocalFrame.setVisibility(View.VISIBLE);
-						viewBalanceLocal.setPrefix(Constants.PREFIX_ALMOST_EQUAL_TO + exchangeRate.currencyCode);
+						viewBalanceLocal.setFormat(Constants.LOCAL_FORMAT.code(0, Constants.PREFIX_ALMOST_EQUAL_TO + exchangeRate.currencyCode));
 						viewBalanceLocal.setAmount(localValue);
 						viewBalanceLocal.setTextColor(getResources().getColor(R.color.fg_less_significant));
 					}
