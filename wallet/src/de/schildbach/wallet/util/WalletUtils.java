@@ -255,7 +255,7 @@ public class WalletUtils
 	{
 		final BufferedReader keyReader = new BufferedReader(new InputStreamReader(is, Charsets.UTF_8));
 		final Wallet wallet = new Wallet(Constants.NETWORK_PARAMETERS);
-		wallet.addKeys(WalletUtils.readKeys(keyReader));
+		wallet.importKeys(WalletUtils.readKeys(keyReader));
 		return wallet;
 	}
 
@@ -390,7 +390,7 @@ public class WalletUtils
 	{
 		ECKey oldestKey = null;
 
-		for (final ECKey key : wallet.getKeys())
+		for (final ECKey key : wallet.getImportedKeys())
 			if (!wallet.isKeyRotating(key))
 				if (oldestKey == null || key.getCreationTimeSeconds() < oldestKey.getCreationTimeSeconds())
 					oldestKey = key;
